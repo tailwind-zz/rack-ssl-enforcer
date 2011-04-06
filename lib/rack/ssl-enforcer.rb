@@ -7,6 +7,7 @@ module Rack
 
     def call(env)
       @req = Rack::Request.new(env)
+      puts @req.path
       if enforce_ssl?(@req)
         scheme = 'https' unless ssl_request?(env)
       elsif ssl_request?(env) && enforcement_non_ssl?(env)
@@ -15,6 +16,7 @@ module Rack
 
       if scheme
         location = replace_scheme(@req, scheme).url
+        puts "redirecting to #{location}"        
         body     = "<html><body>You are being <a href=\"#{location}\">redirected</a>.</body></html>"
         [301, { 'Content-Type' => 'text/html', 'Location' => location }, [body]]
       elsif ssl_request?(env)
